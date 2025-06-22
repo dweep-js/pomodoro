@@ -5,7 +5,8 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Pomo - Pomodoro Timer</title>
     <!-- Link to manifest.json for PWA capabilities -->
-    <link rel="manifest" href="/manifest.json">
+    <!-- The href here is relative to index.html's location -->
+    <link rel="manifest" href="./manifest.json">
     <!-- Tailwind CSS CDN with forms and container-queries plugins -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <!-- Inter font from Google Fonts -->
@@ -240,10 +241,40 @@
     </div>
 
     <!-- Audio element for timer completion sound -->
-    <!-- IMPORTANT: Replace 'audio.mp3' with the actual path to your audio file. -->
-    <audio id="timer-audio" src="audio.mp3" preload="auto"></audio>
+    <!-- IMPORTANT: src path is relative to index.html -->
+    <audio id="timer-audio" src="./audio.mp3" preload="auto"></audio>
 
-    <!-- Link to external JavaScript file -->
-    <script src="script.js"></script>
+    <!-- Link to external JavaScript file - path is relative to index.html -->
+    <script src="./script.js"></script>
+
+    <!-- Service Worker Registration Script - embedded in HTML -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // Register the service worker with the correct scope for GitHub Pages project pages
+                // Service worker file path is relative to index.html
+                // Scope MUST be absolute for GitHub Pages project pages
+                navigator.serviceWorker.register('./service-worker.js', { scope: '/pomodoro/' })
+                    .then(registration => {
+                        console.log('Service Worker registered with scope:', registration.scope);
+
+                        // Optional: Reload page when a new service worker is activated
+                        registration.onupdatefound = () => {
+                            const installingWorker = registration.installing;
+                            if (installingWorker == null) return;
+                            installingWorker.onstatechange = () => {
+                                if (installingWorker.state === 'activated') {
+                                    console.log('New service worker activated, reloading page...');
+                                    window.location.reload();
+                                }
+                            };
+                        };
+                    })
+                    .catch(error => {
+                        console.error('Service Worker registration failed:', error);
+                    });
+            });
+        }
+    </script>
 </body>
 </html>
