@@ -2,15 +2,15 @@
 
 const CACHE_NAME = 'pomo-timer-v1';
 const urlsToCache = [
-    '/', // Root of the app
-    '/index.html',
-    '/script.js',
-    '/audio.mp3', // Make sure this path is correct
-    '/manifest.json',
+    '/pomodoro/', // Root of the app on GitHub Pages
+    '/pomodoro/index.html',
+    '/pomodoro/script.js',
+    '/pomodoro/audio.mp3', // Make sure this path is correct
+    '/pomodoro/manifest.json',
     // Add paths to your icons:
-    '/icons/icon-192x192.png',
-    '/icons/icon-512x512.png',
-    '/icons/icon.svg', // Cache the SVG icon
+    '/pomodoro/icons/icon-192x192.png', // Recommended PNG for best compatibility
+    '/pomodoro/icons/icon-512x512.png', // Recommended PNG for best compatibility
+    '/pomodoro/icon.svg', // Cache the SVG icon, now located directly in /pomodoro/
     'https://cdn.tailwindcss.com?plugins=forms,container-queries', // Cache Tailwind CDN
     'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap', // Cache Inter font
     'https://fonts.googleapis.com/icon?family=Material+Icons' // Cache Material Icons
@@ -23,6 +23,9 @@ self.addEventListener('install', (event) => {
             .then((cache) => {
                 console.log('Opened cache');
                 return cache.addAll(urlsToCache);
+            })
+            .catch(error => {
+                console.error('Failed to cache during install:', error);
             })
     );
 });
@@ -72,7 +75,12 @@ self.addEventListener('fetch', (event) => {
 
                         return fetchResponse;
                     }
-                );
+                ).catch(error => {
+                    // Handle network errors for offline experience
+                    console.error('Fetch failed for:', event.request.url, error);
+                    // You might want to return a fallback page here for offline
+                    // return caches.match('/pomodoro/offline.html'); // If you have an offline page
+                });
             })
     );
 });
