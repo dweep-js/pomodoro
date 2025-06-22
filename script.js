@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const durationSelect = document.getElementById('duration-select');
     const setTimerButton = document.getElementById('set-timer-btn');
-    // Removed reference to testSoundButton
 
     // Back buttons on timer screens
     const backToSetupFocusBtn = document.getElementById('back-to-setup-focus');
