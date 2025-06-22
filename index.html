@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Pomo - Pomodoro Timer</title>
+    <!-- Tailwind CSS CDN with forms and container-queries plugins -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Inter font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <!-- Material Icons for icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <!-- Inline Tailwind CSS with custom CSS variables for dark theme -->
+    <style type="text/tailwindcss">
+        :root {
+            --background: #121212;
+            --card-background: #1E1E1E;
+            --text-primary: #E0E0E0;
+            --text-secondary: #B0B0B0;
+            --accent-red: #CF6679;
+            --accent-red-rgb: 207, 102, 121; /* RGB values for opacity calculations */
+            --accent-green: #03DAC5;
+            --accent-green-rgb: 3, 218, 197;
+            --accent-blue: #BB86FC;
+            --accent-blue-rgb: 187, 134, 252;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text-primary);
+            min-height: max(884px, 100dvh); /* Ensure minimum height for full viewport */
+        }
+        .pomo-logo {
+            width: 40px;
+            height: 40px;
+            background-color: var(--accent-red);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .pomo-logo-icon {
+            font-size: 24px;
+            color: var(--background); /* Icon color contrasts with logo background */
+        }
+        .timer-card {
+            border-radius: 20px;
+            padding: 20px;
+            background-color: var(--card-background);
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.25); /* Darker shadow for dark theme */
+        }
+        .timer-display {
+            font-size: 80px;
+            font-weight: bold;
+            line-height: 1;
+        }
+        .timer-label {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        .control-button {
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            /* Transition for background, transform, and shadow */
+            transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .control-button .material-icons {
+            font-size: 28px;
+        }
+        /* Hover and active states for general control buttons */
+        .control-button:hover {
+            transform: translateY(-2px); /* Slight lift on hover */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+        }
+        .control-button:active {
+            transform: translateY(0); /* Return to original position */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Smaller shadow on click */
+        }
+
+        /* Specific hover background colors for darkening */
+        /* For solid accent buttons (pause buttons) */
+        .control-button.bg-[var(--accent-red)]:hover {
+            background-color: #B24C5C; /* Darker shade of accent-red */
+        }
+        .control-button.bg-[var(--accent-green)]:hover {
+            background-color: #029C91; /* Darker shade of accent-green */
+        }
+        .control-button.bg-[var(--accent-blue)]:hover {
+            background-color: #9C6FE6; /* Darker shade of accent-blue */
+        }
+        /* For semi-transparent buttons (play/reset buttons) */
+        .control-button.bg-opacity-20.bg-[var(--accent-red)]:hover {
+            background-color: rgba(var(--accent-red-rgb), 0.4); /* Increased opacity for darkening */
+        }
+        .control-button.bg-opacity-20.bg-[var(--accent-green)]:hover {
+            background-color: rgba(var(--accent-green-rgb), 0.4); /* Increased opacity for darkening */
+        }
+        .control-button.bg-opacity-20.bg-[var(--accent-blue)]:hover {
+            background-color: rgba(var(--accent-blue-rgb), 0.4); /* Increased opacity for darkening */
+        }
+        /* For Set & Start Timer button */
+        #set-timer-btn.control-button:hover {
+            background-color: #9C6FE6; /* Darker shade of accent-blue */
+        }
+        /* For Test Sound button (now removed from HTML, but style remains if needed elsewhere) */
+        #test-sound-btn.control-button:hover {
+            background-color: #555555; /* Darker shade of text-secondary */
+        }
+
+
+        /* Disabled state for buttons and inputs */
+        .control-button[disabled], select[disabled] {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+            background-color: var(--text-secondary) !important; /* Ensure disabled buttons have a consistent background */
+            color: var(--text-primary) !important;
+        }
+
+        /* Styles for screen transitions */
+        .screen.hidden {
+            display: none;
+        }
+        .screen.opacity-0 {
+            opacity: 0;
+        }
+        .screen.opacity-100 {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-[var(--background)]">
+    <div class="w-full max-w-7xl mx-auto p-4 md:p-8 flex flex-col items-center justify-center">
+        <!-- Main Content Area -->
+        <div class="w-full max-w-lg flex flex-col gap-4 md:gap-6">
+            <!-- Screens Container - uses relative positioning for absolute children -->
+            <div id="screens-container" class="relative w-full min-h-[400px]">
+                <!-- Setup Screen -->
+                <div id="setup-screen" class="screen timer-card absolute inset-0 transition-opacity duration-300">
+                    <div class="flex items-center justify-center mb-6">
+                        <div class="pomo-logo mr-3">
+                            <span class="material-icons pomo-logo-icon">hourglass_empty</span>
+                        </div>
+                        <span class="text-3xl font-bold text-[var(--text-primary)]">Pomo</span>
+                    </div>
+
+                    <!-- Removed the audio information paragraph -->
+
+                    <div class="flex flex-col items-center mb-6">
+                        <label for="duration-select" class="text-[var(--text-secondary)] text-lg block mb-3">Choose Minutes:</label>
+                        <select id="duration-select" class="w-48 p-3 text-center rounded-lg bg-[var(--background)] text-[var(--text-primary)] border border-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-blue)] text-xl font-bold">
+                            <!-- Options will be populated by JavaScript -->
+                        </select>
+                    </div>
+
+                    <div class="flex justify-center mb-4">
+                        <button id="set-timer-btn" class="control-button px-8 py-4 bg-[var(--accent-blue)] text-[var(--text-primary)] font-bold text-xl transition-all duration-300 transform hover:scale-105">
+                            Set & Start Timer
+                        </button>
+                    </div>
+
+                    <!-- Removed the Test Sound button -->
+                </div>
+
+                <!-- Focus Timer Screen -->
+                <div id="focus-screen" class="screen timer-card absolute inset-0 transition-opacity duration-300 opacity-0 hidden">
+                    <div class="flex items-center justify-between mb-6">
+                        <span class="timer-label text-[var(--accent-red)]">Focus Time</span>
+                        <span id="back-to-setup-focus" class="material-icons text-[var(--text-secondary)] cursor-pointer hover:text-[var(--text-primary)]">arrow_back</span>
+                    </div>
+                    <div class="text-center mb-8">
+                        <div id="focus-minutes" class="timer-display text-[var(--accent-red)]">00</div>
+                        <div id="focus-seconds" class="timer-display text-[var(--accent-red)]">00</div>
+                    </div>
+                    <div class="flex justify-center space-x-3">
+                        <button id="focus-pause-btn" class="control-button bg-[var(--accent-red)] text-[var(--text-primary)]">
+                            <span class="material-icons">pause</span>
+                        </button>
+                        <button id="focus-play-btn" class="control-button bg-opacity-20 bg-[var(--accent-red)] text-[var(--text-primary)]">
+                            <span class="material-icons">play_arrow</span>
+                        </button>
+                        <button id="focus-reset-btn" class="control-button bg-opacity-20 bg-[var(--accent-red)] text-[var(--text-primary)]">
+                            <span class="material-icons">replay</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Short Break Timer Screen -->
+                <div id="short-break-screen" class="screen timer-card absolute inset-0 transition-opacity duration-300 opacity-0 hidden">
+                    <div class="flex items-center justify-between mb-6">
+                        <span class="timer-label text-[var(--accent-green)]">Short Break</span>
+                        <span id="back-to-setup-short-break" class="material-icons text-[var(--text-secondary)] cursor-pointer hover:text-[var(--text-primary)]">arrow_back</span>
+                    </div>
+                    <div class="text-center mb-8">
+                        <div id="short-break-minutes" class="timer-display text-[var(--accent-green)]">00</div>
+                        <div id="short-break-seconds" class="timer-display text-[var(--accent-green)]">00</div>
+                    </div>
+                    <div class="flex justify-center space-x-3">
+                        <button id="short-break-pause-btn" class="control-button bg-[var(--accent-green)] text-[var(--text-primary)]">
+                            <span class="material-icons">pause</span>
+                        </button>
+                        <button id="short-break-play-btn" class="control-button bg-opacity-20 bg-[var(--accent-green)] text-[var(--text-primary)]">
+                            <span class="material-icons">play_arrow</span>
+                        </button>
+                        <button id="short-break-reset-btn" class="control-button bg-opacity-20 bg-[var(--accent-green)] text-[var(--text-primary)]">
+                            <span class="material-icons">replay</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Long Break Timer Screen -->
+                <div id="long-break-screen" class="screen timer-card absolute inset-0 transition-opacity duration-300 opacity-0 hidden">
+                    <div class="flex items-center justify-between mb-6">
+                        <span class="timer-label text-[var(--accent-blue)]">Long Break</span>
+                        <span id="back-to-setup-long-break" class="material-icons text-[var(--text-secondary)] cursor-pointer hover:text-[var(--text-primary)]">arrow_back</span>
+                    </div>
+                    <div class="text-center mb-8">
+                        <div id="long-break-minutes" class="timer-display text-[var(--accent-blue)]">00</div>
+                        <div id="long-break-seconds" class="timer-display text-[var(--accent-blue)]">00</div>
+                    </div>
+                    <div class="flex justify-center space-x-3">
+                        <button id="long-break-pause-btn" class="control-button bg-[var(--accent-blue)] text-[var(--text-primary)]">
+                            <span class="material-icons">pause</span>
+                        </button>
+                        <button id="long-break-play-btn" class="control-button bg-opacity-20 bg-[var(--accent-blue)] text-[var(--text-primary)]">
+                            <span class="material-icons">play_arrow</span>
+                        </button>
+                        <button id="long-break-reset-btn" class="control-button bg-opacity-20 bg-[var(--accent-blue)] text-[var(--text-primary)]">
+                            <span class="material-icons">replay</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio element for timer completion sound -->
+    <!-- IMPORTANT: Replace 'audio.mp3' with the actual path to your audio file. -->
+    <audio id="timer-audio" src="audio.mp3" preload="auto"></audio>
+
+    <!-- Link to external JavaScript file -->
+    <script src="script.js"></script>
+</body>
+</html>

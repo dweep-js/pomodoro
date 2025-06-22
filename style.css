@@ -1,0 +1,82 @@
+/* style.css */
+
+/* Base body styles */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #E8E8E8;
+    min-height: max(884px, 100dvh); /* Ensure minimum height for full viewport */
+}
+
+/* Pomo Logo Styling */
+.pomo-logo {
+    width: 40px;
+    height: 40px;
+    background-color: #D95550; /* Red background */
+    border-radius: 10px; /* Rounded corners */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Pomo Logo Icon Styling */
+.pomo-logo-icon {
+    font-size: 24px;
+    color: white; /* White icon */
+}
+
+/* Timer Card Styling */
+.timer-card {
+    border-radius: 20px; /* More rounded corners */
+    padding: 20px;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.05); /* Soft shadow for depth */
+}
+
+/* Timer Display Styling (for minutes and seconds) */
+.timer-display {
+    font-size: 80px;
+    font-weight: bold;
+    line-height: 1; /* Adjust line height to prevent extra space */
+}
+
+/* Timer Label Styling (e.g., Focus, Short Break) */
+.timer-label {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+/* Control Button Styling (Play, Pause, Reset) */
+.control-button {
+    border-radius: 12px; /* Rounded corners for buttons */
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer; /* Indicate interactivity */
+    transition: background-color 0.2s ease, transform 0.1s ease; /* Smooth hover and click effects */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle button shadow */
+}
+
+/* Hover effect for control buttons */
+.control-button:hover {
+    transform: translateY(-2px); /* Slight lift on hover */
+}
+
+/* Active/Clicked state for control buttons */
+.control-button:active {
+    transform: translateY(0); /* Return to original position */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Smaller shadow on click */
+}
+
+/* Icon styling within control buttons */
+.control-button .material-icons {
+    font-size: 28px;
+}
+
+/* Specific button styles for disabled state (optional, can be added via JS) */
+.control-button[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
