@@ -2,23 +2,23 @@
     "name": "Pomo - Pomodoro Timer",
     "short_name": "Pomo",
     "description": "A simple and effective Pomodoro timer for focus and breaks.",
-    "start_url": "/index.html",
+    "start_url": "/pomodoro/index.html",
     "display": "standalone",
     "background_color": "#121212",
     "theme_color": "#CF6679",
     "icons": [
         {
-            "src": "icons/icon-192x192.png",
+            "src": "/pomodoro/icons/icon-192x192.png",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "icons/icon-512x512.png",
+            "src": "/pomodoro/icons/icon-512x512.png",
             "sizes": "512x512",
             "type": "image/png"
         },
         {
-            "src": "icons/icon.svg",
+            "src": "/pomodoro/icon.svg",
             "sizes": "any",
             "type": "image/svg+xml"
         }
