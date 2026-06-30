@@ -58,15 +58,16 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     /**
-     * Populates the duration dropdown with options from 1 to 60 minutes.
+     * Populates the duration dropdown with fixed preset options.
      */
     function populateDurationDropdown() {
-        for (let i = 1; i <= 60; i++) {
+        const presetMinutes = [5, 15, 25, 45, 60];
+        presetMinutes.forEach(i => {
             const option = document.createElement('option');
             option.value = i;
             option.textContent = `${i} minutes`;
             durationSelect.appendChild(option);
-        }
+        });
         // Set a default selected value, e.g., 25 minutes
         durationSelect.value = '25';
     }
@@ -229,11 +230,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedMinutes = parseInt(durationSelect.value);
         let modeToRun;
 
-        if (selectedMinutes < 20) {
+        // Map preset durations to a timer mode
+        if (selectedMinutes === 5 || selectedMinutes === 15) {
             modeToRun = 'shortBreak';
-        } else if (selectedMinutes === 20) {
+        } else if (selectedMinutes === 25) {
             modeToRun = 'focus';
-        } else { // selectedMinutes > 20
+        } else { // 45 or 60
             modeToRun = 'longBreak';
         }
 
