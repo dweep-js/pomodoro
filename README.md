@@ -1,4 +1,4 @@
-# Pomo - Pomodoro Timer
+# Pomodoro - Pomodoro Timer
 
 A really simple Pomodoro timer website, built for personal use (mainly to stay focused while studying). Bare bones by design — no clutter, no extra features, just a timer.
 
